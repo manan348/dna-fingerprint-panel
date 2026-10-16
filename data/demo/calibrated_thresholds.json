@@ -1,0 +1,12 @@
+{
+  "match_threshold": 0.02,
+  "related_threshold": 0.1,
+  "margin_to_second": 0.05,
+  "min_loci_fraction": 0.9,
+  "replicate_mean": 0.005,
+  "replicate_std": 0.01,
+  "nearest_mean": 0.45,
+  "nearest_std": 0.08,
+  "auc": 0.995,
+  "eer": 0.003
+}

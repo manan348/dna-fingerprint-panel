@@ -1,0 +1,96 @@
+# DNA Fingerprint Panel Configuration
+# All parameters for the pipeline. Change only with a logged reason.
+
+project:
+  name: "dna-fingerprint-panel"
+  version: "1.0.0"
+  primary_crop: "maize"
+  reference_genome: "B73_RefGen_v5"
+
+# Panel tiers
+panel:
+  core_size_range: [48, 96]      # Target core panel size
+  backup_fraction: 0.20          # Extra SNPs as backups
+  extended_size_range: [192, 384] # For close relatives
+
+# Separation requirements
+separation:
+  k: 3                           # Minimum SNPs separating each non-clonal pair
+  max_missing_per_sample: 0.10   # Max 10% missing calls per sample
+  target_combined_pi: 1e-15      # Target combined probability of identity
+  min_snp_spacing_bp: 2000000    # 2 Mb minimum physical spacing
+  max_chromosome_fraction: 0.15  # Max ~15% of panel per chromosome
+
+# SNP filtering thresholds (Step 3 QC)
+qc:
+  sample_missing_threshold: 0.10
+  snp_missing_threshold: 0.05
+  maf_threshold_fingerprint: 0.20
+  maf_threshold_close_relatives: 0.05
+  het_threshold_inbreds: 0.05
+  call_rate_threshold: 0.95
+
+# Scoring weights (Step 4)
+scoring:
+  pic_weight: 0.4
+  he_weight: 0.3
+  flank_uniqueness_weight: 0.2
+  spacing_weight: 0.1
+
+# Selection algorithm (Step 5)
+selection:
+  algorithm: "lazy_greedy_ilp"   # greedy -> ILP refinement
+  max_candidates_for_ilp: 5000
+  ilp_time_limit_seconds: 300
+  random_seed: 42
+
+# Robustness testing (Step 7)
+robustness:
+  error_rates: [0.0, 0.01, 0.02, 0.05]
+  missing_rates: [0.0, 0.05, 0.10, 0.15]
+  mixture_proportions: [0.0, 0.05, 0.10, 0.20]
+  n_simulations: 200
+  dropout_rates: [0.05, 0.10, 0.15]
+
+# Matching thresholds (Step 8) - to be calibrated from data
+matching:
+  min_loci_called_fraction: 0.90
+  match_threshold_percentile: 99.9  # Percentile of replicate distance distribution
+  related_threshold: 0.15           # Placeholder, calibrated in Step 8
+  margin_to_second_best: 0.05
+
+# KASP assay design (Step 9)
+assay:
+  amplicon_size_range: [50, 100]
+  primer_tm_range: [57, 63]
+  primer_gc_range: [40, 60]
+  flank_length: 60
+  universal_tails:
+    fam: "GAAGGTGACCAAGTTCATGCT"
+    hex: "GAAGGTCGGAGTCAACGGATT"
+
+# Wet-lab pilot (Step 9)
+pilot:
+  n_lines: 48
+  n_replicates: 3
+  n_relative_pairs: 3
+  include_ntc: true
+  plate_format: 96
+  call_rate_threshold: 0.95
+  concordance_threshold: 0.99
+
+# Random seed for reproducibility
+random_seed: 42
+
+# Paths (relative to project root)
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  manifest: "data/MANIFEST.tsv"
+  metadata: "data/metadata.tsv"
+  reference_genome_fasta: "data/reference/B73_v5.fa"
+  repeat_mask: "data/reference/repeat_mask.bed"
+  results_dir: "results"
+  panels_dir: "results/panels"
+  figures_dir: "results/figures"
+  tables_dir: "results/tables"
